@@ -1,0 +1,7 @@
+flake8
+sphinx
+psycopg2
+sphinx_rtd_theme
+-e git+https://github.com/maigfrga/sqlalchemypostgresutils.git@dev#egg=sqlalchemypostgresutils
+-e git+https://github.com/maigfrga/flaskutils.git@dev#egg=flaskutils
+
