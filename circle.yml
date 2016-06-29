@@ -1,0 +1,13 @@
+machine:
+  node:
+    version: 5.11.1
+  python:
+    version: 3.4.3
+
+dependencies:
+    pre:
+        - pip3 install -r tools/requirements/dev.txt
+test:
+    override:
+        - flake8 ./src/app
+        - cd src; python3 manage.py test --settings config.ci
