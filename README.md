@@ -8,17 +8,14 @@
 
 ### Genre
 
- Field name           | Type             | Description               | Validations           | Read Only |
-----------------------|----------------------------------------------|-----------------------|-----------|
- id                   | Integer          | Account identifier        | * Unique              | YES       |
-                      |                  |                           | * Required            |           |
-----------------------------------------------------------------------------------------------------------
- name                 | character        |                           | * Required            | NO        |
-                      |                  |                           | * Unique for   genre  |           |
-----------------------------------------------------------------------------------------------------------
- description          | character        |                           |                       | NO        |
-                      |                  |                           |                       |           |
-----------------------------------------------------------------------------------------------------------
+| Field name           | Type             | Description               | Validations           | Read Only |
+| -------------------- | -----------------| ------------------------- | --------------------- | --------- |
+| id                   | Integer          | Account identifier        | * Unique              | YES       |
+|                      |                  |                           | * Required            |           |
+| name                 | character        |                           | * Required            | NO        |
+|                      |                  |                           | * Unique for   genre  |           |
+| description          | character        |                           |                       | NO        |
+                      |                   |                           |                       |           |
 
 
 
