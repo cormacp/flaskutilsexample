@@ -2,6 +2,5 @@ flake8
 sphinx
 psycopg2
 sphinx_rtd_theme
--e git+https://github.com/maigfrga/sqlalchemypostgresutils.git@dev#egg=sqlalchemypostgresutils
--e git+https://github.com/maigfrga/flaskutils.git@dev#egg=flaskutils
-
+-e git+https://github.com/Riffstation/sqlalchemypostgresutils.git@1.0.5#egg=sqlalchemypostgresutils
+-e git+https://github.com/Riffstation/flaskutils.git@1.0.10#egg=flaskutils

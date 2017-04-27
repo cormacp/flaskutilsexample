@@ -1,2 +1,2 @@
 -r base.txt
-ipdb
+ipdb==0.10.2
