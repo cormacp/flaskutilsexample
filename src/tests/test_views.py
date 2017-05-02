@@ -52,7 +52,6 @@ class TestAppCase(TransactionalTestCase):
         result = self.client.post(
             '/genres', data=json.dumps(data),
             headers=self.json_request_headers)
-        assert 200 == result.status_code
+        assert 400 == result.status_code
         data = json.loads(result.get_data().decode('utf-8'))
-        assert 'msg' in data
-        assert "'name' is a required property" in data['msg']
+        assert data == {}
