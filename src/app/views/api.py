@@ -47,7 +47,7 @@ class ArtistResourceView(BaseResourceView):
     Includes likely error handling for a GET/PUT endpoint
     """
 
-    methods = ['GET', 'PUT']
+    methods = ['GET', 'PUT', 'DELETE']
 
 
     def get(self, **kwargs):
@@ -123,6 +123,39 @@ class ArtistResourceView(BaseResourceView):
             app.logger.info('serializer error : {}'.format(e))
             return self.json_response(status=400)
 
+        except Exception as e:
+            app.logger.info('general exception : {}'.format(e))
+            self.PGSession.rollback()
+            return self.json_response(status=500)
+
+    def delete(self, **kwargs):
+        try:
+            if 'uuid' in kwargs:
+                target_uuid = kwargs['uuid']
+                target_artist = Artist.objects.get(
+                    key=target_uuid)
+                if target_artist:
+                    target_artist.delete()
+                    self.PGSession.commit()
+                    return self.json_response(status=200, data={})
+            else:
+                raise ValidationError("Artist not specified")
+
+        except DataError as e:
+            app.logger.info('data error : {}'.format(e))
+            self.PGSession.rollback()
+            return self.json_response(status=400)
+
+        except NotFoundError as e:
+            app.logger.info('not found error : {}'.format(e))
+            # REQUEST structure was valid, but ID was invalid. Return 404
+            return self.json_response(status=404)
+
+        except ValidationError as e:
+            app.logger.info('validation error : {}'.format(e))
+            return self.json_response(status=400)
+
+        # General exception handler
         except Exception as e:
             app.logger.info('general exception : {}'.format(e))
             self.PGSession.rollback()
