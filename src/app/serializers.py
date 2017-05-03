@@ -1,5 +1,4 @@
-from flaskutils.serializers import BaseSerializer
-from flaskutils.serializers import uuid_schema
+from flaskutils.serializers import BaseSerializer, uuid_schema
 from app.models import Genre, Artist
 from decimal import Decimal
 
