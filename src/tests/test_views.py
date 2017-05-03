@@ -156,6 +156,39 @@ class TestAppCase(TransactionalTestCase):
         assert 404 == result.status_code
         assert Artist.objects.count() == init_artist_count
 
+    def test_delete_existing_artist(self):
+        """
+        Makes a DELETE request for a valid UUID and validates responses
+        """
+        # Make a GET request for an existing and valid artist UUID
+        artist = self.factory.get_artist()
+        init_artist_count = Artist.objects.count()
+        result = self.client.delete(
+            '/artists/' + str(artist.key),
+            headers=self.json_request_headers)
+
+        # Test for valid response code
+        assert 200 == result.status_code
+        data = json.loads(result.get_data().decode('utf-8'))
+        # Test for response JSON
+        assert data == {}
+        assert Artist.objects.count() == init_artist_count - 1
+
+    def test_delete_unknown_artist(self):
+        """
+        Makes a DELETE request for an invalid UUID
+        """
+        # Make a GET request for an existing and valid artist UUID
+        self.factory.get_artist()
+        init_artist_count = Artist.objects.count()
+        new_uuid = uuid.uuid4()
+        result = self.client.delete(
+            'artists/' + str(new_uuid),
+            headers=self.json_request_headers)
+        # Test for valid response code
+        assert 404 == result.status_code
+        assert Artist.objects.count() == init_artist_count
+
     def test_post_genre_serializer(self):
         """
         Test correct format for post serializers
