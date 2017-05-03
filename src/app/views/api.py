@@ -4,8 +4,8 @@ from flaskutils.views import BaseResourceView
 from pgsqlutils.orm import Session
 from sqlalchemy.exc import DataError, IntegrityError
 from pgsqlutils.orm import NotFoundError
-from app.models import Genre
-from app.serializers import PostGenreSerializer
+from app.models import Genre, Artist
+from app.serializers import PostGenreSerializer, GetArtistSerializer
 from jsonschema import ValidationError
 from werkzeug.exceptions import BadRequest
 
@@ -40,8 +40,40 @@ class ApiDescription(BaseResourceView):
         return self.json_response(200, data=data)
 
 
+class ArtistResourceView(BaseResourceView):
+    """
+    Sample endpoint that supports GET requests
+    Includes likely error handling for a GET endpoint
+    """
+    def get(self, **kwargs):
+        try:
+            if 'uuid' in kwargs:
+                artist = Artist.objects.get(key=kwargs['uuid'])
+                data = GetArtistSerializer(model=artist).to_json()
+                # return self.json_response(
+                #     200, {'artist': artist})
+                return self.json_response(
+                    200, {'artist': data})
+            else:
+                return self.json_response(200, {'artist': 'not specified'})
+
+        except NotFoundError as e:
+            # REQUEST structure was valid, but ID was invalid. Return 404
+            return self.json_response(status=404)
+
+        except ValidationError as e:
+            return self.json_response(status=400)
+
+        # General exception handler
+        except Exception as e:
+            app.logger.info(e)
+            return self.json_response(status=500)
+
+
 class GenreResourceView(BaseResourceView):
     """
+    Sample endpoint that supports POST requests
+    Includes likely error handling for a POST endpoint
     """
     methods = ['POST']
 
