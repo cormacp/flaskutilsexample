@@ -20,26 +20,6 @@ class Factory(object):
         else:
             return '{0}'.format(st)
 
-    # def get_random_word_list(self, n=50):
-    #     return ' '.join([self.create_unique_string() for x in range(n)])
-    #
-    # def get_random_time_series(self, n=50):
-    #     def get_number(i):
-    #         return i + random.uniform(0, 1)
-    #
-    #     return [get_number(i) for i in range(50)]
-
-    # def get_random_chord(self):
-    #     EXISTING_CHORDS = (
-    #         'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#',
-    #         'Am', 'A#m', 'Bm', 'Cm', 'C#m', 'Dm', 'D#m', 'Em', 'Fm', 'F#m',
-    #         'Gm', 'G#m'
-    #     )
-    #     return random.choice(EXISTING_CHORDS)
-    #
-    # def get_random_chord_list(self, n=50):
-    #     return [self.get_random_chord() for x in range(n)]
-
     def get_artist(self, **kwargs):
             string = self.create_unique_string()
             properties = {
