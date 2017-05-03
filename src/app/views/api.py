@@ -1,11 +1,12 @@
 from flask import request
 from flaskutils import app
 from flaskutils.views import BaseResourceView
+from flaskutils.exceptions import SerializerError
 from pgsqlutils.orm import Session
 from sqlalchemy.exc import DataError, IntegrityError
 from pgsqlutils.orm import NotFoundError
 from app.models import Genre, Artist
-from app.serializers import PostGenreSerializer, GetArtistSerializer
+from app.serializers import PostGenreSerializer, GetArtistSerializer, PutArtistSerializer
 from jsonschema import ValidationError
 from werkzeug.exceptions import BadRequest
 
@@ -42,9 +43,13 @@ class ApiDescription(BaseResourceView):
 
 class ArtistResourceView(BaseResourceView):
     """
-    Sample endpoint that supports GET requests
-    Includes likely error handling for a GET endpoint
+    Sample endpoint that supports GET and PUT requests
+    Includes likely error handling for a GET/PUT endpoint
     """
+
+    methods = ['GET', 'PUT']
+
+
     def get(self, **kwargs):
         try:
             if 'uuid' in kwargs:
@@ -67,6 +72,60 @@ class ArtistResourceView(BaseResourceView):
         # General exception handler
         except Exception as e:
             app.logger.info(e)
+            return self.json_response(status=500)
+
+    def put(self, **kwargs):
+        try:
+            if 'uuid' not in kwargs:
+                raise ValidationError("Artist not specified")
+
+            target_uuid = kwargs['uuid']
+            serializer = PutArtistSerializer(data=request.json)
+            assert str(target_uuid) == serializer.key
+            obj = serializer.update()
+            self.PGSession.commit()
+
+            app.logger.info(
+                'artist with id {} has been updated'.format(target_uuid))
+            return self.json_response(status=200, data={'artist': serializer.to_json()})
+
+        except DataError as e:
+            app.logger.info('data error : {}'.format(e))
+            self.PGSession.rollback()
+            return self.json_response(status=400)
+
+        except IntegrityError as e:
+            app.logger.info('integrity error : {}'.format(e))
+            self.PGSession.rollback()
+            return self.json_response(status=400)
+
+        except ValidationError as e:
+            app.logger.info('validation error : {}'.format(e))
+            return self.json_response(status=400)
+
+        except ValueError as e:
+            app.logger.info('value error : {}'.format(e))
+            return self.json_response(status=400)
+
+        except NotFoundError as e:
+            app.logger.info('not found error : {}'.format(e))
+            return self.json_response(status=404)
+
+        except AssertionError:
+            app.logger.info('assertion error')
+            return self.json_response(status=400)
+
+        except BadRequest:
+            app.logger.info('bad request')
+            return self.json_response(status=400)
+
+        except SerializerError as e:
+            app.logger.info('serializer error : {}'.format(e))
+            return self.json_response(status=400)
+
+        except Exception as e:
+            app.logger.info('general exception : {}'.format(e))
+            self.PGSession.rollback()
             return self.json_response(status=500)
 
 
