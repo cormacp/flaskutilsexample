@@ -1,15 +1,25 @@
 from flaskutils.test import TransactionalTestCase
-
-from app.models import Genre
+from app.models import Genre, Artist
 from app.serializers import PostGenreSerializer
 from unittest.mock import Mock
 from jsonschema import ValidationError
-
+from tests.factory import Factory
+import uuid
 import json
 import pytest
 
 
 class TestAppCase(TransactionalTestCase):
+    def setup(self):
+        super(TestAppCase, self).setup()
+        self.json_request_headers = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic dXNlcjpwYXNz'
+        }
+        self.factory = Factory(self.PGSession)
+        self.factory.clear_artists()
+
     def test_api_root(self):
         """
         Makes a HTTP GET REQUEST AND API information
@@ -22,6 +32,44 @@ class TestAppCase(TransactionalTestCase):
         assert 'version' in data
         assert '1.0' == data['version']
         assert 'entityMetadata' in data
+
+    def test_get_artist(self):
+        """
+        Makes a valid GET request for artist data
+        """
+        artist = self.factory.get_artist()
+
+        result = self.client.get(
+            '/artists/' + str(artist.key),
+            headers=self.json_request_headers)
+
+        assert 200 == result.status_code
+        data = json.loads(result.get_data().decode('utf-8'))
+        # Test for non-empty response JSON
+        assert data != {}
+
+        # Traverse into the 'artist' block of JSON
+        data = data['artist']
+        # Test required values: key, name
+        assert 'key' in data
+        assert data['key'] is not None
+        assert data['key'] == str(artist.key)
+        assert 'name' in data
+        assert data['name'] is not None
+        assert data['name'] == artist.name
+        assert data['name'][0].lower() == data['first_character'].lower()
+
+    def test_get_invalid_artist(self):
+        """
+        Makes a valid GET request for artist data
+        """
+        artist = self.factory.get_artist()
+
+        result = self.client.get(
+            '/artists/' + str(uuid.uuid4()),
+            headers=self.json_request_headers)
+
+        assert 404 == result.status_code
 
     def test_post_genre_serializer(self):
         """
