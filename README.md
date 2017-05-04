@@ -75,3 +75,33 @@ To create a set of basic sample data for manual testing:
     Sample db population complete...
 
 ```
+
+## Example Requests
+The following requests are syntactically valid FlaskUtilsExample requests for each CRUD method
+
+### GET / Read
+```
+    curl -X GET \
+    http://192.168.30.133:8080/artists/72de1ad1-7234-496f-8faf-520571c48648
+```
+...sample response:
+```
+    {
+      "artist": {
+        "extra_params": null,
+        "first_character": "d",
+        "id": "72de1ad1-7234-496f-8faf-520571c48648",
+        "image": "http://www.imageurl.com/image.jpeg",
+        "is_popular": true,
+        "members": [],
+        "name": "d9c5yi",
+        "related_artists": []
+      }
+    }
+```
+
+### POST / Create
+
+### PUT / Update
+
+### DELETE
