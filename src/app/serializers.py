@@ -128,14 +128,4 @@ class PutArtistSerializer(BaseSerializer):
         for name, value in self._json.items():
             if name == 'id':
                 name = 'key'
-
-            if name in self._properties:
-                # applying proper formatting when required
-                if 'format' in self._properties[name]:
-                    format = self._properties[name]['format']
-
-                    if 'date-time' == format:
-                        value = utils.string_to_datetime(value)
-                    elif 'date' == format:
-                        value = utils.string_to_date(value)
             setattr(self, name, value)
