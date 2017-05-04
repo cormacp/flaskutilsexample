@@ -43,11 +43,11 @@ class ApiDescription(BaseResourceView):
 
 class ArtistResourceView(BaseResourceView):
     """
-    Sample endpoint that supports GET and PUT requests
-    Includes likely error handling for a GET/PUT endpoint
+    Sample endpoint that supports GET, POST, DELETE and PUT requests
+    Includes likely error handling for a GET/PUT/POST/DELETE endpoint
     """
 
-    methods = ['GET', 'PUT', 'DELETE']
+    methods = ['GET', 'PUT', 'DELETE', 'POST']
 
 
     def get(self, **kwargs):
@@ -55,8 +55,7 @@ class ArtistResourceView(BaseResourceView):
             if 'uuid' in kwargs:
                 artist = Artist.objects.get(key=kwargs['uuid'])
                 data = GetArtistSerializer(model=artist).to_json()
-                # return self.json_response(
-                #     200, {'artist': artist})
+
                 return self.json_response(
                     200, {'artist': data})
             else:
