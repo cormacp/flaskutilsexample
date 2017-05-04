@@ -1,11 +1,8 @@
 from flaskutils.test import TransactionalTestCase
 from app.models import Artist
-from unittest.mock import Mock
-from jsonschema import ValidationError
 from tests.factory import Factory
 import uuid
 import json
-import pytest
 
 
 class TestArtistEndpoints(TransactionalTestCase):
@@ -62,7 +59,7 @@ class TestArtistEndpoints(TransactionalTestCase):
         """
         Makes a valid GET request for artist data
         """
-        artist = self.factory.get_artist()
+        self.factory.get_artist()
 
         result = self.client.get(
             '/artists/' + str(uuid.uuid4()),
