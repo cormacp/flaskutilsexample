@@ -64,3 +64,14 @@ This example application includes a sample suite of unit tests. Each resource me
 ```
 
 ### Generating sample DB data
+To create a set of basic sample data for manual testing:
+```
+    vagrant ssh
+    cd /src/src
+    python3 manage.py populate_db
+
+    Generating sample data:
+    artists...
+    Sample db population complete...
+
+```
