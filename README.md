@@ -101,7 +101,81 @@ The following requests are syntactically valid FlaskUtilsExample requests for ea
 ```
 
 ### POST / Create
+```
+    curl -X POST \
+      http://192.168.30.133:8080/artists \
+      -H 'cache-control: no-cache' \
+      -H 'content-type: application/json' \
+      -d '{
+      "name": "New Artist",
+      "image": "http://imageurl.jpeg",
+      "members": [
+        "11c03524-1911-433f-bf86-f234cacd5bcf",
+        "a503faf9-45b5-4fec-8334-337284a66ea4"
+      ],
+      "related_artists": [
+        "079117d5-8fcc-4f11-82d8-0f975a408b12",
+        "3d49a1f9-3b1f-491c-b504-a5f4190b802c"
+      ],
+      "is_popular": true
+    }'
+```
+...sample response:
+```
+    {
+      "id": "fc75a21e-dbf7-4c77-b27b-38784d45d2b5"
+    }
+```
 
 ### PUT / Update
+```
+    curl -X PUT \
+      http://192.168.30.133:8080/artists/fc75a21e-dbf7-4c77-b27b-38784d45d2b5 \
+      -H 'cache-control: no-cache' \
+      -H 'content-type: application/json' \
+      -d '{
+      "id": "fc75a21e-dbf7-4c77-b27b-38784d45d2b5",
+      "name": "Ammended Artist Name",
+      "image": "http://imageurl.jpeg",
+      "members": [
+        "11c03524-1911-433f-bf86-f234cacd5bcf",
+        "a503faf9-45b5-4fec-8334-337284a66ea4"
+      ],
+      "related_artists": [
+        "079117d5-8fcc-4f11-82d8-0f975a408b12",
+        "3d49a1f9-3b1f-491c-b504-a5f4190b802c"
+      ],
+      "is_popular": true
+    }'
+```
+...sample response:
+```
+    {
+      "artist": {
+        "id": "fc75a21e-dbf7-4c77-b27b-38784d45d2b5",
+        "image": "http://imageurl.jpeg",
+        "is_popular": true,
+        "members": [
+          "11c03524-1911-433f-bf86-f234cacd5bcf",
+          "a503faf9-45b5-4fec-8334-337284a66ea4"
+        ],
+        "name": "Ammended Artist Name",
+        "related_artists": [
+          "079117d5-8fcc-4f11-82d8-0f975a408b12",
+          "3d49a1f9-3b1f-491c-b504-a5f4190b802c"
+        ]
+      }
+    }
+```
 
 ### DELETE
+```
+    curl -X DELETE \
+      http://192.168.30.133:8080/artists/fc75a21e-dbf7-4c77-b27b-38784d45d2b5 \
+      -H 'cache-control: no-cache' \
+      -H 'postman-token: 132f3275-95de-7e70-e284-ca88221fe31f'
+```
+...sample response:
+```
+    {}
+```
