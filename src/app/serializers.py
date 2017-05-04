@@ -58,6 +58,30 @@ class GetArtistSerializer(BaseSerializer):
         return data
 
 
+class PostArtistSerializer(BaseSerializer):
+    """
+    POST responses require :
+        name
+    """
+    _schema = {
+        'type': 'object',
+        'definitions': {
+            'key': uuid_schema,
+        },
+        'properties': {
+            'name': {'type': 'string', 'minLength': 1},
+            'image': {'type': 'string'},
+            'members': {'type': 'array'},
+            'related_artists': {'type': 'array'},
+            'is_popular': {'type': 'boolean'},
+            'first_character': {'type': 'string'},
+            'extra_params': {'type': 'object'}
+        },
+        'required': [
+            'name']
+    }
+
+
 class PutArtistSerializer(BaseSerializer):
     """
     PUT responses require :
