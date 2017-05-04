@@ -9,9 +9,9 @@ import json
 import pytest
 
 
-class TestAppCase(TransactionalTestCase):
+class TestArtistEndpoints(TransactionalTestCase):
     def setup(self):
-        super(TestAppCase, self).setup()
+        super(TestArtistEndpoints, self).setup()
         self.json_request_headers = {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -189,35 +189,105 @@ class TestAppCase(TransactionalTestCase):
         assert 404 == result.status_code
         assert Artist.objects.count() == init_artist_count
 
-    def test_post_genre_serializer(self):
+    def test_post_artist_valid(self):
         """
-        Test correct format for post serializers
+        Makes a POST method request and validates responses
         """
-        data = {'name': 'rock', 'description': 'nice'}
-        request = Mock()
-        request.json = data
-        PostGenreSerializer(request=request)
-        data = {'description': 'nice'}
-        request.json = data
-        with pytest.raises(ValidationError) as excinfo:
-            PostGenreSerializer(request=request)
-        assert "'name' is a required property" in str(excinfo.value)
+        self.factory.get_artist()
+        init_artist_count = Artist.objects.count()
 
-    def test_create_genre(self):
-        """
-        Makes a post request and create a new genre
-        """
-        data = {'name': 'rock', 'description': 'nice'}
-        assert 0 == Genre.objects.count()
+        # construct a valid JSON body for a POST artist request
+        post_request_body = {
+            "name": "NewArtist",
+            "image": "imageURL",
+            "members": [
+                "11c03524-1911-433f-bf86-f234cacd5bcf",
+                "a503faf9-45b5-4fec-8334-337284a66ea4"
+            ],
+            "related_artists": [
+                "079117d5-8fcc-4f11-82d8-0f975a408b12",
+                "3d49a1f9-3b1f-491c-b504-a5f4190b802c"
+            ],
+            "is_popular": True
+        }
+        request_url = '/artists'
+
         result = self.client.post(
-            '/genres', data=json.dumps(data),
+            request_url, data=json.dumps(post_request_body),
             headers=self.json_request_headers)
+
+        # Test for valid response code
         assert 201 == result.status_code
-        assert 1 == Genre.objects.count()
-        data = {'description': 'nice'}
+        response_data = json.loads(result.get_data().decode('utf-8'))
+        # Test for non-empty response JSON
+        assert response_data != {}
+        assert 'id' in response_data
+
+        # Test that a successful POST operation increases the record count by 1
+        assert Artist.objects.count() == init_artist_count + 1
+
+    def test_post_artist_existing(self):
+        """
+        Makes a POST request to an existing artist name
+        """
+        assert 0 == Artist.objects.count()
+        artist = self.factory.get_artist()
+        assert 1 == Artist.objects.count()
+
+        # construct a valid JSON body for a POST artist request
+        post_request_body = {
+            "name": str(artist.name),
+            "image": "imageURL",
+            "members": [
+                "11c03524-1911-433f-bf86-f234cacd5bcf",
+                "a503faf9-45b5-4fec-8334-337284a66ea4"
+            ],
+            "related_artists": [
+                "079117d5-8fcc-4f11-82d8-0f975a408b12",
+                "3d49a1f9-3b1f-491c-b504-a5f4190b802c"
+            ],
+            "is_popular": True
+            }
+        request_url = '/artists'
         result = self.client.post(
-            '/genres', data=json.dumps(data),
+            request_url, data=json.dumps(post_request_body),
             headers=self.json_request_headers)
+
+        # Test for valid response code
         assert 400 == result.status_code
-        data = json.loads(result.get_data().decode('utf-8'))
-        assert data == {}
+        self.PGSession.rollback()
+        assert Artist.objects.count() == 1
+
+
+    # def test_post_genre_serializer(self):
+    #     """
+    #     Test correct format for post serializers
+    #     """
+    #     data = {'name': 'rock', 'description': 'nice'}
+    #     request = Mock()
+    #     request.json = data
+    #     PostGenreSerializer(request=request)
+    #     data = {'description': 'nice'}
+    #     request.json = data
+    #     with pytest.raises(ValidationError) as excinfo:
+    #         PostGenreSerializer(request=request)
+    #     assert "'name' is a required property" in str(excinfo.value)
+    #
+    # def test_create_genre(self):
+    #     """
+    #     Makes a post request and create a new genre
+    #     """
+    #     data = {'name': 'rock', 'description': 'nice'}
+    #     assert 0 == Genre.objects.count()
+    #     result = self.client.post(
+    #         '/genres', data=json.dumps(data),
+    #         headers=self.json_request_headers)
+    #     assert 201 == result.status_code
+    #     assert 1 == Genre.objects.count()
+    #     data = {'description': 'nice'}
+    #     result = self.client.post(
+    #         '/genres', data=json.dumps(data),
+    #         headers=self.json_request_headers)
+    #     assert 400 == result.status_code
+    #     data = json.loads(result.get_data().decode('utf-8'))
+    #     assert data == {}
