@@ -6,9 +6,10 @@ from pgsqlutils.orm import Session
 from sqlalchemy.exc import DataError, IntegrityError
 from pgsqlutils.orm import NotFoundError
 from app.models import Genre, Artist
-from app.serializers import PostGenreSerializer, GetArtistSerializer, PutArtistSerializer
+from app.serializers import PostGenreSerializer, GetArtistSerializer, PutArtistSerializer, PostArtistSerializer
 from jsonschema import ValidationError
 from werkzeug.exceptions import BadRequest
+import uuid
 
 
 class ApiDescription(BaseResourceView):
@@ -157,6 +158,52 @@ class ArtistResourceView(BaseResourceView):
         # General exception handler
         except Exception as e:
             app.logger.info('general exception : {}'.format(e))
+            self.PGSession.rollback()
+            return self.json_response(status=500)
+
+    def post(self, **kwargs):
+        try:
+            serialized_data = PostArtistSerializer(data=request.json).to_json()
+            serialized_data['key'] = uuid.uuid4()
+            obj = Artist(**serialized_data)
+            obj.add()
+            self.PGSession.commit()
+            return self.json_response(
+                status=201, data={'id': obj.key}
+            )
+
+        except BadRequest:
+            app.logger.info('BadRequest error : {}'.format(e))
+            return self.json_response(status=400)
+
+        except DataError as e:
+            app.logger.info('DataError error : {}'.format(e))
+            self.PGSession.rollback()
+            return self.json_response(status=400)
+
+        except AssertionError:
+            return self.json_response(status=400)
+
+        except IntegrityError as e:
+            app.logger.info('IntegrityError error : {}'.format(e))
+            self.PGSession.rollback()
+            return self.json_response(status=400)
+
+        except ValidationError as e:
+            app.logger.info('ValidationError error : {}'.format(e))
+            return self.json_response(status=400)
+
+        except ValueError as e:
+            app.logger.info('ValueError error : {}'.format(e))
+            return self.json_response(status=400)
+
+        except SerializerError as e:
+            app.logger.info('SerializerError : {}'.format(e))
+            return self.json_response(status=400)
+
+        except Exception as e:
+            app.logger.info('General Exception : {}'.format(e))
+            app.logger.error(e)
             self.PGSession.rollback()
             return self.json_response(status=500)
 
