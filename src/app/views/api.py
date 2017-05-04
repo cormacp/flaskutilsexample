@@ -2,11 +2,11 @@ from flask import request
 from flaskutils import app
 from flaskutils.views import BaseResourceView
 from flaskutils.exceptions import SerializerError
-from pgsqlutils.orm import Session
 from sqlalchemy.exc import DataError, IntegrityError
 from pgsqlutils.orm import NotFoundError
 from app.models import Artist
-from app.serializers import GetArtistSerializer, PutArtistSerializer, PostArtistSerializer
+from app.serializers import (
+    GetArtistSerializer, PutArtistSerializer, PostArtistSerializer)
 from jsonschema import ValidationError
 from werkzeug.exceptions import BadRequest
 import uuid
@@ -50,7 +50,6 @@ class ArtistResourceView(BaseResourceView):
 
     methods = ['GET', 'PUT', 'DELETE', 'POST']
 
-
     def get(self, **kwargs):
         try:
             if 'uuid' in kwargs:
@@ -82,12 +81,13 @@ class ArtistResourceView(BaseResourceView):
             target_uuid = kwargs['uuid']
             serializer = PutArtistSerializer(data=request.json)
             assert str(target_uuid) == serializer.key
-            obj = serializer.update()
+            serializer.update()
             self.PGSession.commit()
 
             app.logger.info(
                 'artist with id {} has been updated'.format(target_uuid))
-            return self.json_response(status=200, data={'artist': serializer.to_json()})
+            return self.json_response(
+                status=200, data={'artist': serializer.to_json()})
 
         except DataError as e:
             app.logger.info('data error : {}'.format(e))
@@ -172,7 +172,7 @@ class ArtistResourceView(BaseResourceView):
                 status=201, data={'id': obj.key}
             )
 
-        except BadRequest:
+        except BadRequest as e:
             app.logger.info('BadRequest error : {}'.format(e))
             return self.json_response(status=400)
 
