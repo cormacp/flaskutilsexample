@@ -41,3 +41,26 @@ To run a listening instance of the application, issue the following commands:
     python3 manage.py runserver
 ```
 ...this will start an instance of our FlaskUtilsExample application, which is accessible at http://192.168.30.133:8080
+
+### Running unit tests
+This example application includes a sample suite of unit tests. Each resource method (GET, POST, PUT, DELETE) has two simple unit tests; a valid successful request, and an invalid but correctly handled request. To run this suite of tests:
+
+```
+    vagrant ssh
+    cd /src/src
+    python3 manage.py test
+
+    vagrant@debian-jessie:/src/src$ python3 manage.py test
+    ================================================================================ test session starts =================================================================================
+    platform linux -- Python 3.4.2, pytest-3.0.7, py-1.4.33, pluggy-0.4.0
+    rootdir: /src/src, inifile:
+    collected 9 items
+
+    tests/test_views.py ...--------------------------------------------------------------------------------
+
+    ============================================================================== 9 passed in 0.34 seconds ==============================================================================
+    vagrant@debian-jessie:/src/src$
+
+```
+
+### Generating sample DB data
