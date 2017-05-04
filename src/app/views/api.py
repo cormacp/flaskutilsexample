@@ -5,8 +5,8 @@ from flaskutils.exceptions import SerializerError
 from pgsqlutils.orm import Session
 from sqlalchemy.exc import DataError, IntegrityError
 from pgsqlutils.orm import NotFoundError
-from app.models import Genre, Artist
-from app.serializers import PostGenreSerializer, GetArtistSerializer, PutArtistSerializer, PostArtistSerializer
+from app.models import Artist
+from app.serializers import GetArtistSerializer, PutArtistSerializer, PostArtistSerializer
 from jsonschema import ValidationError
 from werkzeug.exceptions import BadRequest
 import uuid
@@ -203,51 +203,6 @@ class ArtistResourceView(BaseResourceView):
 
         except Exception as e:
             app.logger.info('General Exception : {}'.format(e))
-            app.logger.error(e)
-            self.PGSession.rollback()
-            return self.json_response(status=500)
-
-
-class GenreResourceView(BaseResourceView):
-    """
-    Sample endpoint that supports POST requests
-    Includes likely error handling for a POST endpoint
-    """
-    methods = ['POST']
-
-    def post(self):
-        try:
-            serialized_data = PostGenreSerializer(data=request.json).to_json()
-            genre_obj = Genre(**serialized_data)
-            genre_obj.add()
-            self.PGSession.commit()
-
-            app.logger.info(
-                'genre with id {} has been created'.format(genre_obj.id))
-            return self.json_response(status=201, data={'id': genre_obj.id})
-
-        except BadRequest:
-            return self.json_response(status=400)
-
-        except DataError as e:
-            app.logger.info('data error : {}'.format(e))
-            self.PGSession.rollback()
-            return self.json_response(status=400)
-
-        except AssertionError:
-            return self.json_response(status=400)
-
-        except IntegrityError as e:
-            app.logger.info('integrity error : {}'.format(e))
-            self.PGSession.rollback()
-            return self.json_response(status=400)
-
-        except ValidationError as e:
-            app.logger.info('request validation error : {}'.format(e))
-            self.PGSession.rollback()
-            return self.json_response(status=400)
-
-        except Exception as e:
             app.logger.error(e)
             self.PGSession.rollback()
             return self.json_response(status=500)

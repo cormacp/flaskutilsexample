@@ -1,4 +1,4 @@
-from app.models import Genre, Artist
+from app.models import Artist
 import uuid
 import random
 import string

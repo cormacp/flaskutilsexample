@@ -1,21 +1,6 @@
 from flaskutils.serializers import BaseSerializer, uuid_schema
-from app.models import Genre, Artist
+from app.models import Artist
 from decimal import Decimal
-
-
-class PostGenreSerializer(BaseSerializer):
-    """
-    Post requests don't required id as they mean to be
-    used for create new objects
-    """
-    _schema = {
-        'type': 'object',
-        'properties': {
-            'name': {'type': 'string'},
-            'description': {'type': 'string'},
-        },
-        'required': ['name']
-    }
 
 
 class GetArtistSerializer(BaseSerializer):

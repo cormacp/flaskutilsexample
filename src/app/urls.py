@@ -1,8 +1,7 @@
-from .views.api import ApiDescription, GenreResourceView, ArtistResourceView
+from .views.api import ApiDescription, ArtistResourceView
 
 URLS = (
     ('/', ApiDescription, 'api_description'),
-    ('/genres', GenreResourceView, 'genres'),
     ('/artists', ArtistResourceView, 'artists'),
     ('/artists/<uuid:uuid>', ArtistResourceView, 'specific_artist'),
 )

@@ -5,12 +5,6 @@ from sqlalchemy.dialects.postgresql import (
 )
 
 
-class Genre(FlaskModel):
-    __tablename__ = 'genre'
-    name = Column(String(256))
-    description = Column(String(256))
-
-
 class Artist(FlaskModel):
     __tablename__ = 'artists'
     key = Column(UUID(as_uuid=True), nullable=False, unique=True)
