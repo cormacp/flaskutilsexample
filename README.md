@@ -8,10 +8,11 @@ The FlaskUtilsExample application is a simple introduction to a Flask applicatio
 * Full CRUD (Create, Remove, Update, Delete) support for the **Artist** endpoint
 * Example usage of FlaskUtils' **app**, **view**, **model**, **exception**, **serializers** and **test** modules
 * Sample Unit tests for each supported CRUD method
-* Factory function for populating the DB with a minimum set of sample data
+* Factory function and console command for populating the DB with a minimum set of sample data
 
 ## Resources
 
+Our application uses an example **Artist** model as the basis for a full CRUD implementation. The following table shows the structure of a sample **Artist** object:
 
 ### Artist
 
@@ -27,3 +28,16 @@ The FlaskUtilsExample application is a simple introduction to a Flask applicatio
 |  is_popular          | boolean          | popular artist flag       |                       | NO        |
 |  first_character     | character        | first character of name   |                       | NO        |
 |  extra_params        | JSON object      | object for misc params    |                       | NO        |
+
+## Using the FlaskUtilsExample application
+
+### Running an application instance
+To run a listening instance of the application, issue the following commands:
+```
+    cd ~/src/fender/flaskutilsexample
+    vagrant up
+    vagrant ssh
+    cd /src/src
+    python3 manage.py runserver
+```
+...this will start an instance of our FlaskUtilsExample application, which is accessible at http://192.168.30.133:8080
